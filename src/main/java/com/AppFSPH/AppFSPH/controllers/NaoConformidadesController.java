@@ -3,6 +3,7 @@ package com.AppFSPH.AppFSPH.controllers;
 import com.AppFSPH.AppFSPH.models.NaoConformidades;
 import com.AppFSPH.AppFSPH.services.NaoConformidadesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,46 +13,50 @@ import java.util.List;
 @RequestMapping("/api/nao-conformidades")
 public class NaoConformidadesController {
 
+    private final NaoConformidadesService service;
+
     @Autowired
-    private NaoConformidadesService service;
+    public NaoConformidadesController(NaoConformidadesService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public List<NaoConformidades> getAll() {
-        return service.findAll();
+    public ResponseEntity<List<NaoConformidades>> getAll() {
+        List<NaoConformidades> naoConformidadesList = service.findAll();
+        return ResponseEntity.ok(naoConformidadesList);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<NaoConformidades> getById(@PathVariable int id) {
-        NaoConformidades naoConformidade = service.findById(id);
-        if (naoConformidade != null) {
-            return ResponseEntity.ok(naoConformidade);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PostMapping
-    public NaoConformidades create(@RequestBody NaoConformidades naoConformidade) {
-        return service.save(naoConformidade);
+    public ResponseEntity<NaoConformidades> create(@RequestBody NaoConformidades naoConformidade) {
+        NaoConformidades createdNaoConformidade = service.save(naoConformidade);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdNaoConformidade);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<NaoConformidades> update(@PathVariable int id, @RequestBody NaoConformidades naoConformidade) {
-        if (service.findById(id) != null) {
+        if (service.findById(id).isPresent()) {
             naoConformidade.setId(id);
-            return ResponseEntity.ok(service.save(naoConformidade));
+            NaoConformidades updatedNaoConformidade = service.save(naoConformidade);
+            return ResponseEntity.ok(updatedNaoConformidade);
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
-        if (service.findById(id) != null) {
+        if (service.findById(id).isPresent()) {
             service.deleteById(id);
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

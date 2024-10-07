@@ -1,13 +1,12 @@
 package com.AppFSPH.AppFSPH.models;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.LocalDateTime;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class NaoConformidades implements Serializable {
@@ -24,12 +23,15 @@ public class NaoConformidades implements Serializable {
     @NotNull
     private String descricao;
 
-    private Date dataAbertura;
+    @NotNull
+    private String dataAbertura; // Altere para LocalDate ou String se o formato for "yyyy-MM-dd"
 
     private String origemNaoConformidade;
 
-    private int tipoNaoConformidade;
+    @NotNull
+    private int tipoNaoConformidadeId; // Atualizado para 'tipoNaoConformidadeId' para refletir o JSON
 
+    @NotNull
     private int statusId;
 
     private int grausSeveridadeId;
@@ -38,8 +40,9 @@ public class NaoConformidades implements Serializable {
 
     private LocalDateTime dataHoraCriacao;
 
-    private LocalDateTime dataHoraUltimaAlteracao;
+    private LocalDateTime usuarioUltimaAlteracao; // Corrigido para refletir o JSON
 
+    private LocalDateTime dataHoraUltimaAlteracao;
 
     public NaoConformidades() {
     }
@@ -69,11 +72,11 @@ public class NaoConformidades implements Serializable {
         this.descricao = descricao;
     }
 
-    public Date getDataAbertura() {
+    public String getDataAbertura() {
         return dataAbertura;
     }
 
-    public void setDataAbertura(Date dataAbertura) {
+    public void setDataAbertura(String dataAbertura) { // Atualizado para String
         this.dataAbertura = dataAbertura;
     }
 
@@ -85,12 +88,12 @@ public class NaoConformidades implements Serializable {
         this.origemNaoConformidade = origemNaoConformidade;
     }
 
-    public int getTipoNaoConformidade() {
-        return tipoNaoConformidade;
+    public int getTipoNaoConformidadeId() {
+        return tipoNaoConformidadeId;
     }
 
-    public void setTipoNaoConformidade(int tipoNaoConformidade) {
-        this.tipoNaoConformidade = tipoNaoConformidade;
+    public void setTipoNaoConformidadeId(int tipoNaoConformidadeId) {
+        this.tipoNaoConformidadeId = tipoNaoConformidadeId;
     }
 
     public int getStatusId() {
@@ -125,6 +128,14 @@ public class NaoConformidades implements Serializable {
         this.dataHoraCriacao = dataHoraCriacao;
     }
 
+    public LocalDateTime getUsuarioUltimaAlteracao() {
+        return usuarioUltimaAlteracao; // Corrigido para o campo correto
+    }
+
+    public void setUsuarioUltimaAlteracao(LocalDateTime usuarioUltimaAlteracao) {
+        this.usuarioUltimaAlteracao = usuarioUltimaAlteracao; // Corrigido para o campo correto
+    }
+
     public LocalDateTime getDataHoraUltimaAlteracao() {
         return dataHoraUltimaAlteracao;
     }
@@ -139,9 +150,9 @@ public class NaoConformidades implements Serializable {
                 "id=" + id +
                 ", assunto=" + assunto +
                 ", descricao='" + descricao + '\'' +
-                ", dataAbertura=" + dataAbertura +
+                ", dataAbertura='" + dataAbertura + '\'' +
                 ", origemNaoConformidade='" + origemNaoConformidade + '\'' +
-                ", tipoNaoConformidade=" + tipoNaoConformidade +
+                ", tipoNaoConformidadeId=" + tipoNaoConformidadeId +
                 ", statusId=" + statusId +
                 ", grausSeveridadeId=" + grausSeveridadeId +
                 ", departamentoId=" + departamentoId +

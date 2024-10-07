@@ -1,11 +1,12 @@
 package com.AppFSPH.AppFSPH.services;
 
 import com.AppFSPH.AppFSPH.models.NaoConformidades;
-import com.AppFSPH.AppFSPH.repositories.NaoConformidadesRepository;
+import com.AppFSPH.AppFSPH.repositories.NaoConformidadesRepository; // Assumindo que você tem um repositório
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class NaoConformidadesService {
@@ -17,8 +18,8 @@ public class NaoConformidadesService {
         return repository.findAll();
     }
 
-    public NaoConformidades findById(int id) {
-        return repository.findById(id).orElse(null);
+    public Optional<NaoConformidades> findById(int id) {
+        return repository.findById(id);
     }
 
     public NaoConformidades save(NaoConformidades naoConformidade) {
