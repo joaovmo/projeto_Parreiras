@@ -35,6 +35,7 @@ public class NaoConformidadesController {
 
     @PostMapping
     public ResponseEntity<NaoConformidades> create(@RequestBody NaoConformidades naoConformidade) {
+        // Não é necessário converter, já que o Jackson deve lidar com isso se o JSON for válido
         NaoConformidades createdNaoConformidade = service.save(naoConformidade);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdNaoConformidade);
     }
@@ -49,6 +50,7 @@ public class NaoConformidadesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable int id) {
