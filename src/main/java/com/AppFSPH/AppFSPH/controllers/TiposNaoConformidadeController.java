@@ -22,8 +22,8 @@ public class TiposNaoConformidadeController {
 
     @GetMapping
     public ResponseEntity<List<TiposNaoConformidade>> getAll() {
-        List<TiposNaoConformidade> tiposList = service.findAll();
-        return ResponseEntity.ok(tiposList);
+        List<TiposNaoConformidade> tiposNaoConformidadeList = service.findAll();
+        return ResponseEntity.ok(tiposNaoConformidadeList);
     }
 
     @GetMapping("/{id}")
@@ -35,16 +35,16 @@ public class TiposNaoConformidadeController {
 
     @PostMapping
     public ResponseEntity<TiposNaoConformidade> create(@RequestBody TiposNaoConformidade tiposNaoConformidade) {
-        TiposNaoConformidade createdTipos = service.save(tiposNaoConformidade);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTipos);
+        TiposNaoConformidade createdTipoNaoConformidade = service.save(tiposNaoConformidade);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTipoNaoConformidade);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<TiposNaoConformidade> update(@PathVariable int id, @RequestBody TiposNaoConformidade tiposNaoConformidade) {
         if (service.findById(id).isPresent()) {
             tiposNaoConformidade.setId(id);
-            TiposNaoConformidade updatedTipos = service.save(tiposNaoConformidade);
-            return ResponseEntity.ok(updatedTipos);
+            TiposNaoConformidade updatedTipoNaoConformidade = service.save(tiposNaoConformidade);
+            return ResponseEntity.ok(updatedTipoNaoConformidade);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

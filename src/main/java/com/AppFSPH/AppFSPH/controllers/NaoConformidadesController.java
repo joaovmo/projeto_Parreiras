@@ -61,4 +61,20 @@ public class NaoConformidadesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+    
+    @GetMapping("/departamento/{departamentoId}")
+    public ResponseEntity<List<NaoConformidades>> getByDepartamentoId(@PathVariable int departamentoId) {
+        List<NaoConformidades> naoConformidadesList = service.findByDepartamentoId(departamentoId);
+        if (naoConformidadesList.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(naoConformidadesList);
+    }
+    @GetMapping("/departamento/{departamentoId}/count")
+    public ResponseEntity<Long> countByDepartamentoId(@PathVariable int departamentoId) {
+        long count = service.countByDepartamentoId(departamentoId);
+        return ResponseEntity.ok(count);
+    }
+
+
 }

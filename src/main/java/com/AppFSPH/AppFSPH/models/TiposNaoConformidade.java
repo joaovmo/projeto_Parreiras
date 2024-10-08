@@ -4,7 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class TiposNaoConformidade {
@@ -13,26 +14,18 @@ public class TiposNaoConformidade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotNull
-    private String nome;
-
+    @NotBlank(message = "Descrição não pode ser vazia")
+    @Size(max = 255, message = "Descrição não pode ter mais de 255 caracteres")
     private String descricao;
 
-    // Getters e Setters
+    // Getters e setters
+
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 
     public String getDescricao() {
@@ -43,4 +36,3 @@ public class TiposNaoConformidade {
         this.descricao = descricao;
     }
 }
-
