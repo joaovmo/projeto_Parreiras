@@ -2,6 +2,10 @@ package com.AppFSPH.AppFSPH.controllers;
 
 import com.AppFSPH.AppFSPH.models.NaoConformidades;
 import com.AppFSPH.AppFSPH.services.NaoConformidadesService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,22 +28,30 @@ public class NaoConformidadesController {
         this.service = service;
     }
 
-    @GetMapping
+    @Operation(summary = "Listar todas as não conformidades", description = "Retorna uma lista de todas as não conformidades.")
     @PreAuthorize("hasRole('ADMIN') or hasRole('DEPARTAMENTO_CHEFE') or hasRole('CONTROLE_QUALIDADE')")
+    @GetMapping
     public ResponseEntity<List<NaoConformidades>> getAll() {
         List<NaoConformidades> naoConformidadesList = service.findAll();
         return ResponseEntity.ok(naoConformidadesList);
     }
 
-    @GetMapping("/{id}")
+    @Operation(summary = "Buscar não conformidade por ID", description = "Retorna uma não conformidade específica pelo ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Não conformidade encontrada"),
+        @ApiResponse(responseCode = "404", description = "Não conformidade não encontrada")
+    })
     @PreAuthorize("hasRole('ADMIN') or hasRole('DEPARTAMENTO_CHEFE') or hasRole('CONTROLE_QUALIDADE')")
-    public ResponseEntity<NaoConformidades> getById(@PathVariable int id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<NaoConformidades> getById(
+        @Parameter(description = "ID da não conformidade a ser buscada") @PathVariable int id) {
         return service.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    // Método de criação consolidado
+    @Operation(summary = "Criar uma nova não conformidade", description = "Adiciona uma nova não conformidade.")
+    @ApiResponse(responseCode = "201", description = "Não conformidade criada com sucesso")
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('DEPARTAMENTO_CHEFE') or hasRole('CONTROLE_QUALIDADE') or hasRole('COMUM')")
     public ResponseEntity<NaoConformidades> create(@RequestBody NaoConformidades naoConformidade,
@@ -64,9 +76,16 @@ public class NaoConformidadesController {
         }
     }
 
+    @Operation(summary = "Atualizar uma não conformidade existente", description = "Atualiza os dados de uma não conformidade existente pelo ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Não conformidade atualizada"),
+        @ApiResponse(responseCode = "404", description = "Não conformidade não encontrada")
+    })
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('DEPARTAMENTO_CHEFE')")
-    public ResponseEntity<NaoConformidades> update(@PathVariable int id, @RequestBody NaoConformidades naoConformidade) {
+    public ResponseEntity<NaoConformidades> update(
+        @Parameter(description = "ID da não conformidade a ser atualizada") @PathVariable int id, 
+        @RequestBody NaoConformidades naoConformidade) {
         if (service.findById(id).isPresent()) {
             naoConformidade.setId(id);
             naoConformidade.setDataHoraUltimaAlteracao(LocalDateTime.now());
@@ -77,9 +96,15 @@ public class NaoConformidadesController {
         }
     }
 
+    @Operation(summary = "Deletar uma não conformidade", description = "Remove uma não conformidade pelo ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Não conformidade deletada com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Não conformidade não encontrada")
+    })
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
+    public ResponseEntity<Void> delete(
+        @Parameter(description = "ID da não conformidade a ser deletada") @PathVariable int id) {
         if (service.findById(id).isPresent()) {
             service.deleteById(id);
             return ResponseEntity.noContent().build();
@@ -88,9 +113,11 @@ public class NaoConformidadesController {
         }
     }
 
-    @GetMapping("/departamento/{departamentoId}")
+    @Operation(summary = "Listar não conformidades por ID de departamento", description = "Retorna uma lista de não conformidades associadas a um departamento específico.")
     @PreAuthorize("hasRole('ADMIN') or hasRole('DEPARTAMENTO_CHEFE')")
-    public ResponseEntity<List<NaoConformidades>> getByDepartamentoId(@PathVariable int departamentoId) {
+    @GetMapping("/departamento/{departamentoId}")
+    public ResponseEntity<List<NaoConformidades>> getByDepartamentoId(
+        @Parameter(description = "ID do departamento a ser buscado") @PathVariable int departamentoId) {
         List<NaoConformidades> naoConformidadesList = service.findByDepartamentoId(departamentoId);
         if (naoConformidadesList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -98,9 +125,11 @@ public class NaoConformidadesController {
         return ResponseEntity.ok(naoConformidadesList);
     }
 
-    @GetMapping("/departamento/{departamentoId}/count")
+    @Operation(summary = "Contar não conformidades por ID de departamento", description = "Retorna o número de não conformidades associadas a um departamento específico.")
     @PreAuthorize("hasRole('ADMIN') or hasRole('DEPARTAMENTO_CHEFE')")
-    public ResponseEntity<Long> countByDepartamentoId(@PathVariable int departamentoId) {
+    @GetMapping("/departamento/{departamentoId}/count")
+    public ResponseEntity<Long> countByDepartamentoId(
+        @Parameter(description = "ID do departamento para contar as não conformidades") @PathVariable int departamentoId) {
         long count = service.countByDepartamentoId(departamentoId);
         return ResponseEntity.ok(count);
     }
