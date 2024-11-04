@@ -2,7 +2,6 @@ package com.AppFSPH.AppFSPH.config;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -19,6 +18,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -32,8 +33,11 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/login")
+                .loginProcessingUrl("/login") // Processa o login nesta URL
                 .successHandler(customSuccessHandler())
+                .failureHandler((request, response, exception) -> {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
+                })
                 .permitAll()
             )
             .logout(logout -> logout
@@ -76,7 +80,7 @@ public class SecurityConfig {
 
             ObjectMapper mapper = new ObjectMapper();
             try {
-                response.getWriter().write(mapper.writeValueAsString(List.of(userData)));
+                response.getWriter().write(mapper.writeValueAsString(userData));
             } catch (IOException e) {
                 e.printStackTrace();
             }
