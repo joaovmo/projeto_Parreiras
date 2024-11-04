@@ -1,15 +1,15 @@
 package com.AppFSPH.AppFSPH.controllers;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.AppFSPH.AppFSPH.models.User;
 import com.AppFSPH.AppFSPH.services.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 public class AuthController {
 
     private final UserService userService;
@@ -18,35 +18,21 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @Operation(summary = "Exibir página de login", description = "Mostra o formulário de login para o usuário.")
     @GetMapping("/login")
-    public String login() {
-        return "login";
+    public ResponseEntity<?> login() {
+        return ResponseEntity.ok("Página de login"); // Ou retorne um objeto que represente a página de login
     }
 
-    @Operation(summary = "Exibir formulário de registro", description = "Mostra o formulário de registro para o usuário.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Formulário de registro recuperado com sucesso"),
-        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
-    })
     @GetMapping("/register")
-    public String registerForm(Model model) {
-        model.addAttribute("user", new User());
-        return "register";
+    public ResponseEntity<?> registerForm() {
+        return ResponseEntity.ok("Formulário de registro"); // Retorne uma mensagem ou um objeto com informações do registro
     }
 
-    @Operation(summary = "Registrar um novo usuário", description = "Gerencia o registro do usuário.")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "302", description = "Usuário registrado com sucesso e redirecionado para login"),
-        @ApiResponse(responseCode = "400", description = "Requisição inválida, dados do usuário inválidos"),
-        @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
-    })
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user) {
-        // Codificando a senha do usuário antes de salvar
+    public ResponseEntity<?> registerUser(@ModelAttribute User user) {
         String encodedPassword = userService.encodePassword(user.getPassword());
-        user.setPassword(encodedPassword); // Definindo a senha codificada no objeto User
-        userService.saveUser(user); // Salvando o usuário no banco de dados
-        return "redirect:/login"; // Redirecionando para a página de login
+        user.setPassword(encodedPassword);
+        userService.saveUser(user);
+        return ResponseEntity.ok("Usuário registrado com sucesso"); // Retorna sucesso
     }
 }
