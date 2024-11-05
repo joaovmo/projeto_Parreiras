@@ -31,9 +31,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOrigin("http://localhost:5501"); // Adicione a origem permitida
+        configuration.addAllowedOrigin("http://localhost:5173"); // Origem permitida
         configuration.addAllowedHeader("*"); // Permitir todos os cabeçalhos
-        configuration.addAllowedMethod("*"); // Permitir todos os métodos
+        configuration.addAllowedMethod("*"); // Permitir todos os métodos (GET, POST, etc.)
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -42,14 +42,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Usando a configuração de CORS
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Configuração de CORS
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/register", "/login", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .requestMatchers("/register", "/login", "/v3/api-docs/*", "/swagger-ui/*", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginProcessingUrl("/login") // Processa o login nesta URL
+                .loginProcessingUrl("/login")
                 .successHandler(customSuccessHandler())
                 .failureHandler((request, response, exception) -> {
                     response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage());
